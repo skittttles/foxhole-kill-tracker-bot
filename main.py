@@ -8,17 +8,74 @@ import time
 import requests
 import oci
 import base64
+import logging
 from dotenv import load_dotenv
 
 from vehicleNames import vehicleHash
 from vicPrices import *
+import sql
 
 load_dotenv()
+
 
 botKey = os.getenv("DISCORD")
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="$", intents=intents)
+
+#Discord Helpers
+
+def createGenericErrorEmbed(message):
+  errorEmbed = discord.Embed(description=message, color=0x852424)
+  errorEmbed.set_author(name=f"Error running command", icon_url="https://i.imgur.com/4cHVOnD.png")
+  return errorEmbed
+
+def createGenericEmbed(title, message):
+  successEmbed = discord.Embed(title=title, description=message, color=0x245484)
+  return successEmbed
+
+#Specific Function Helpers
+
+def calculateScrap(costList):
+  totalScrap = 0
+  for material, value in costList.items():
+    costs = scrapCosts.get(material)
+    if costs is None:
+      print(f"Error could not find {material} in scrapCosts")
+      pass
+    totalScrap += costs * value
+  return totalScrap
+
+def calculateComps(costList):
+  totalComps = 0
+  for material, value in costList.items():
+    costs = compCosts.get(material)
+    if costs is None:
+      print(f"Error could not find {material} in compCosts")
+      pass
+    totalComps += costs * value
+  return totalComps
+
+def calculateRares(costList):
+  totalRares = 0
+  for material, value in costList.items():
+    costs = rareCosts.get(material)
+    if costs is None:
+      print(f"Error could not find {material} in rareCosts")
+      pass
+    totalRares += costs * value
+  return totalRares
+
+def getCostObject(costDict):
+  returnObject = {
+    "scrap" : calculateScrap(costDict),
+    "comps" : calculateComps(costDict),
+    "rares" : calculateRares(costDict),
+  }
+  return returnObject
+
+
+#Discord Bot Commands
 
 @bot.tree.command(name="reset", description="Resets current database")
 async def reset(interaction: discord.Interaction, confirm: bool):
@@ -28,27 +85,44 @@ async def reset(interaction: discord.Interaction, confirm: bool):
 async def stats(interaction: discord.Interaction):
   pass
 
+@bot.tree.command(name="cost", description="Lookup cost of an item")
+async def stats(interaction: discord.Interaction, vehicle: str):
+  vehicleName = vehicleHash.get(vehicle)
 
-def calculateScrap(costList):
-  totalScrap = 0
-  for material, value in costList.items():
-    totalScrap += scrapCosts[material] * value
-  return totalScrap
+  if vehicleName == None:
+    logging.info(f"Could not find vehicle name {vehicle}")
+    error = createGenericErrorEmbed(f"Vehicle name not found for {vehicle}, if you believe this is an error contact @skitttles")
+    await interaction.response.send_message(embed=error, ephemeral=True)
+    return
 
-def calculateComps(costList):
-  totalComps = 0
-  for material, value in costList.items():
-    totalComps += compCosts[material] * value
-  return totalComps
+  vehicleObject = vicPrices.get(vehicleName)
 
-def calculateRares(costList):
-  totalRares = 0
-  for material, value in costList.items():
-    totalRares += rareCosts[material] * value
-  return totalRares
+  if vehicleObject is None:
+    logging.warning(f"No vicPrices entry found for {vehicleName}")
+    error = createGenericErrorEmbed(f"Vehicle price lookup entry not found for {vehicleName}, contact @skitttles")
+    await interaction.response.send_message(embed=error, ephemeral=True)
+    return
+
+  costDict = vehicleObject.get('cost')
+  
+  if costDict is None:
+    logging.warning(f"Cost dictionary not found for {vehicleName}")
+    error = createGenericErrorEmbed(f"Vehicle price cost dictionary not found in lookup for {vehicleName}, contact @skitttles")
+    await interaction.response.send_message(embed=error, ephemeral=True)
+    return
+
+  costs = getCostObject(costDict)
+  title = f"Cost values for {vehicleName[1:]}"
+  message = f"**T1 Cost**\nScrap: {costs.get("scrap")}\nComps: {costs.get("comps")}\nRares: {costs.get("rares")}"
+  #Check if T2 / T3 is available then append here
+  embed = createGenericEmbed(title, message)
+
+  await interaction.response.send_message(embed=embed)
+
+
 
 @bot.tree.command(name="killed", description="Use to log a kill")
-#@app_commands.command(name="killed")
+@app_commands.describe(quantity="Number of this specific vehicle to log", vehicle="Vehicle name found in /list to log", type="Vehicle tier if applicable (T1 most common)",clan="List a clan associated with the kill if applicable")
 @app_commands.choices(type=[
   app_commands.Choice(name="T1",value="t1"),
   app_commands.Choice(name="T2",value="t2"),
@@ -57,37 +131,38 @@ def calculateRares(costList):
 ])
 async def killed(interaction: discord.Interaction, quantity: int, vehicle: str, type: app_commands.Choice[str], clan: str=None):
 
-  print(f"Args passed: {quantity} {vehicle} {type['value']} {clan}")
+  print(f"Args passed: {quantity} {vehicle} {type.value} {clan}")
   #Need to get DB but this is a later issue
-
-  #Simply calculate values
 
   #Get vehicle name
   vehicleName = vehicleHash.get(vehicle)
 
-  if vehicleName == None:
-    print("Not found")
-    pass
+  if quantity <= 0:
+    error = createGenericErrorEmbed(f"Invalid quantity, please enter a positive number (> 0)")
+    await interaction.response.send_message(embed=error, ephemeral=True)
+    return
 
-  if quantity == 0:
-    print("Cannot add 0 vehicles")
+  if vehicleName == None:
+    logging.info(f"Could not find vehicle name {vehicle}")
+    error = createGenericErrorEmbed(f"Vehicle name not found for {vehicle}, if you believe this is an error contact @skitttles")
+    await interaction.response.send_message(embed=error, ephemeral=True)
     return
 
   vehicleObject = vicPrices.get(vehicleName)
 
   if vehicleObject is None:
-    print("No vicPrice entry found for this")
+    logging.warning(f"No vicPrices entry found for {vehicleName}")
+    error = createGenericErrorEmbed(f"Vehicle price lookup entry not found for {vehicleName}, contact @skitttles")
+    await interaction.response.send_message(embed=error, ephemeral=True)
     return
 
   costDict = vehicleObject.get('cost')
   
   if costDict is None:
-    print("Costs not found")
+    logging.warning(f"Cost dictionary not found for {vehicleName}")
+    error = createGenericErrorEmbed(f"Vehicle price cost dictionary not found in lookup for {vehicleName}, contact @skitttles")
+    await interaction.response.send_message(embed=error, ephemeral=True)
     return
-  
-  #Check of tier and append that and check cost prices from that?
-  #such as svh -> wSilverhand -> wSilverhandT2 db entry?
-  
 
   #Get prices
   scrapCost = 0
@@ -115,6 +190,8 @@ async def killed(interaction: discord.Interaction, quantity: int, vehicle: str, 
   
 
   print(costDict)
+  print(vehicleName)
+  print(clan)
   print(f"Scrap: {scrapCost}")
   print(f"Comps: {compCost}")
   print(f"Rares: {rareCost}")
@@ -154,5 +231,7 @@ async def on_ready():
     print(f"Synced {len(synced)} commands")
   except Exception as e:
     print(e)
+
+
 
 bot.run(botKey)

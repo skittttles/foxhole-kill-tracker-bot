@@ -1,3 +1,5 @@
+#Contains objects for vehicle in the game and its associated cost input 
+
 '''
 rares - rare metals comps
 comps - individual comp
@@ -41,7 +43,7 @@ compCosts = {
   "assmat4" : 20,
   "assmat5" : 180, 
   "steel" : 60,
-  "ralloy" : 150,
+  "ralloy" : 100,
 }
 
 rareCosts = {
@@ -225,6 +227,260 @@ vicPrices = {
       "assmat3" : 3
     }
   },
-  #COLLIE LIGHT TANK
- 
+#COLONIAL LIGHT TANKS
+    "cHatchet" : {
+        "cost" : {
+          "rares" : 115
+        }
+    },
+    "cPelekys (LTD)" : {
+        "cost" : {
+          "rares" : 115,
+          "pcmats" : 8,
+          "assmat2" : 20,
+          "assmat3" : 5
+        }
+    },
+    "cFlame Hatchet" : {
+        "cost" : {
+          "rares" : 115,
+          "pcmats" : 8,
+          "assmat2" : 20,
+          "assmat3" : 5
+        }
+    },
+    "cKranesca" : {
+        "cost" : {
+          "rares" : 115,
+          "pcmats" : 5,
+          "assmat1" : 20,
+          "assmat4" : 5
+        }
+    },
+    "cHA-1 Sagaris (AA)" : {
+        "cost" : {
+          "rares" : 125
+        }
+    },
+    #WARDEN LIGHT TANKS
+    "wDevitt" : {
+        "cost" : {
+          "rares" : 120
+        }
+    },
+    "wDevitt Ironhide" : {
+        "cost" : {
+          "rares" : 120,
+          "pcmats" : 8,
+          "assmat2" : 20,
+          "assmat3" : 5
+        }
+    },
+    "wDevitt Caine Mortar" : {
+        "cost" : {
+          "rares" : 125,
+          "pcmats" : 3,
+          "assmat1" : 20,
+          "assmat4" : 3
+        }
+    },
+    "wSharkey Devitt Birdeater (AA)" : {
+        "cost" : {
+          "rares" : 125
+        }
+    },
+
+    #WARDEN ASSAULT
+    "wSilverHand" : {
+        "cost" : {
+          "rares" : 160
+        }
+    },
+    "wChieftan" : {
+        "cost" : {
+          "rares" : 160,
+          "pcmats" : 5,
+          "assmat1" : 10,
+          "assmat4" : 8
+        }
+    },
+    "wLordScar" : {
+        "cost" : {
+          "rares" : 160,
+          "steel" : 15,
+          "assmat2" : 25,
+          "assmat3" : 25
+        }
+    },
+    #COLONIAL ASSAULT
+    "cFalchion" : {
+        "cost" : {
+          "rares" : 135 #Should probably use mpf for this
+        }
+    },
+    "cSpatha" : {
+        "cost" : {
+          "rares" : 135,
+          "pcmats" : 12,
+          "assmat1" : 10,
+          "assmat4" : 8
+        }
+    },
+    "cTalos" : {
+        "cost" : {
+          "rares" : 135,
+          "steel" : 3,
+          "assmat1" : 10,
+          "assmat3" : 15,
+          "assmat4" : 15
+        }
+    },
+    "cBardiche" : {
+        "cost" : {
+          "rares" : 165 
+        }
+    },
+    "cRanseur (Quadiche)" : { #CHANGED
+        "cost" : {
+          "rares" : 165,
+          "pcmats" : 10,
+          "assmat2" : 10,
+          "assmat3" : 10,
+        }
+    },
+    "cNemesis" : {
+        "cost" : {
+          "rares" : 150
+        }
+    },
+    #WARDEN CRUISER
+    "wBrigand" : {
+        "cost" : {
+          "rares" : 150
+        }
+    },
+    "wHighwayman" : {
+        "cost" : {
+          "rares" : 150,
+          "pcmats" : 5,
+          "assmat2" : 10,
+          "assmat3" : 5
+        }
+    },
+    "wOutlaw" : {
+        "cost" : {
+          "rares" : 150,
+          "pcmats" : 10,
+          "assmat1" : 10,
+          "assmat4" : 10,
+        }
+    },
+    "wThornfall" : {
+        "cost" : {
+          "rares" : 150,
+          "pcmats" : 60,
+          "assmat1" : 10,
+          "assmat3" : 15,
+          "assmat4" : 15,
+        }
+    },
+    #COLLIE IST
+    "cScorpion" : {
+        "cost" : {
+          "rares" : 100
+        }
+    },
+    "cBallista" : {
+        "cost" : {
+          "rares" : 100,
+          "pcmats" : 15,
+          "assmat2" : 15
+        }
+    },
+
+    #WARDEN TD
+    "wWidow" : {
+        "cost" : {
+          "rares" : 160
+        }
+    },
+    "wFirebrand" : {
+        "cost" : {
+          "rares" : 160,
+          "pcmats" : 10,
+          "assmat2" : 10,
+          "assmat3" : 15
+        }
+    },
+
+    #WARDEN BT / SPECIAL
+    "wFlood (BT)" : { #CHANGED
+        "cost" : {
+          "steel" : 50,
+          "assmat3" : 30,
+          "assmat4" : 60,
+          "assmat5" : 35
+        }
+    },
+    "wJuggernaut (BT)" : { #CHANGED
+        "cost" : {
+          "steel" : 40,
+          "assmat3" : 65,
+          "assmat4" : 30,
+          "assmat5" : 45
+        }
+    },
+    "wStain (SPG)" : { #CHANGED
+        "cost" : {
+          "steel" : 150,
+          "assmat3" : 65,
+          "assmat4" : 40,
+          "assmat5" : 85
+        }
+    },
+    "cLance (BT)" : { #CHANGED
+        "cost" : {
+          "steel" : 50,
+          "assmat3" : 30,
+          "assmat4" : 60,
+          "assmat5" : 35
+        }
+    },
+    "cHasta (BTD)" : { #CHANGED
+        "cost" : {
+          "steel" : 60,
+          "assmat3" : 65,
+          "assmat4" : 45,
+          "assmat5" : 65
+        }
+    },
+    "cSarissa (SPG)" : { #CHANGED
+        "cost" : {
+          "steel" : 150,
+          "assmat3" : 65,
+          "assmat4" : 40,
+          "assmat5" : 85
+        }
+    },
+    #SUPERS
+    "cAres" : {
+        "cost" : {
+          "steel" : 275,
+          "assmat3" : 105,
+          "assmat4" : 95,
+          "assmat5" : 105,
+          "ralloy" : 3,
+        }
+    },
+    "wCullen Predator" : {
+        "cost" : {
+          "steel" : 275,
+          "assmat3" : 105,
+          "assmat4" : 95,
+          "assmat5" : 105,
+          "ralloy" : 3,
+        }
+    },
+
+
 }
