@@ -195,6 +195,8 @@ async def killed(interaction: discord.Interaction, quantity: int, vehicle: str, 
   print(f"Scrap: {scrapCost}")
   print(f"Comps: {compCost}")
   print(f"Rares: {rareCost}")
+
+  #Now we need to 
     
   pass
 
