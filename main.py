@@ -2,8 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 from discord.utils import get
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+
 import os
 import time
 import requests
@@ -13,14 +12,6 @@ from dotenv import load_dotenv
 
 from vehicleNames import vehicleHash
 from vicPrices import *
-
-
-
-# names = {
-#   "svh" : "wSilverhand",
-#   "silverhand" : "wSilverhand",
-#   "tank" : "wSilverhand"
-# }
 
 load_dotenv()
 
